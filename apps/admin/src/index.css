@@ -1,0 +1,200 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  color: #1f2329;
+  background: #f3f5f8;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.login-page {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.login-brand {
+  position: relative;
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  padding: 72px;
+  background-color: #0f1c2e;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: #fff;
+}
+
+.brand-copy {
+  position: relative;
+  max-width: 440px;
+}
+
+.login-panel {
+  flex: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  background: #f3f5f8;
+}
+
+.login-card {
+  width: 420px;
+  padding: 32px;
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #1f4b99;
+  color: #fff;
+  font-weight: 700;
+}
+
+.admin-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 16px;
+  overflow: hidden;
+  color: #fff;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.admin-shell {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.admin-sider {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.admin-sider .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-menu {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+  background: #f3f5f8;
+}
+
+.admin-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 20px;
+  line-height: 56px;
+  border-bottom: 1px solid #e6e8eb;
+  z-index: 2;
+}
+
+.admin-content {
+  flex: 1;
+  min-height: 0;
+  padding: 24px;
+  overflow: auto;
+}
+
+.header-title {
+  font-weight: 600;
+}
+
+.header-role {
+  margin-left: 8px;
+  color: #667085;
+  font-size: 12px;
+}
+
+.admin-footer {
+  flex: none;
+  padding: 12px 24px 16px;
+  color: #8a94a6;
+  text-align: center;
+  background: #f3f5f8;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tree-box {
+  max-height: 320px;
+  margin-top: 8px;
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid #e6e8eb;
+  border-radius: 6px;
+}
+
+.linkish {
+  border: 0;
+  background: transparent;
+  color: #1f4b99;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-brand,
+  .login-panel {
+    flex: none;
+    width: 100%;
+  }
+
+  .login-brand {
+    padding: 48px 24px;
+  }
+
+  .login-card {
+    width: 100%;
+  }
+}
