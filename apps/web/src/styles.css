@@ -15,9 +15,14 @@ button, input, textarea {
 
 a { color: inherit; }
 
-.shell { min-height: 100vh; }
+.shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 .topbar {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 28px;
@@ -49,22 +54,64 @@ a { color: inherit; }
 
 button:disabled { opacity: 0.6; cursor: default; }
 
-main { padding: 28px; }
+main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  overflow: auto;
+}
 
-.ask, .library, .reader { max-width: 860px; margin: 0 auto; }
+.library, .reader { max-width: 860px; margin: 0 auto; width: 100%; }
 
-.thread { display: grid; gap: 22px; min-height: 46vh; }
+.ask {
+  flex: 1;
+  min-height: 0;
+  width: min(760px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
 
-.turn { display: grid; gap: 10px; }
+.ask.empty { justify-content: center; }
+
+.ask-hero {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  text-align: center;
+}
+
+.ask-hero h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.ask-hero p { margin: 0; color: #6d655c; }
+
+.ask-hero .composer { width: min(680px, 100%); }
+
+.thread {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 8px 4px 20px;
+}
+
+.turn { display: flex; flex-direction: column; gap: 12px; }
 
 .question {
-  justify-self: end;
-  max-width: 70%;
+  align-self: flex-end;
+  max-width: 75%;
   margin: 0;
-  padding: 10px 14px;
-  border-radius: 16px 16px 4px 16px;
-  background: #1c1915;
-  color: #f7f3ea;
+  padding: 10px 16px;
+  border-radius: 18px;
+  background: #efeae2;
 }
 
 .answer {
@@ -72,34 +119,55 @@ main { padding: 28px; }
   white-space: pre-wrap;
 }
 
-.sources { display: grid; gap: 8px; }
+.answer.pending { color: #6d655c; }
+
+.answer.failed { color: #9f2d2d; }
+
+.sources { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .sources a {
-  display: grid;
-  gap: 2px;
-  padding: 10px 12px;
+  padding: 1px 8px;
+  font-size: 12px;
+  line-height: 1.5;
   text-decoration: none;
   background: white;
-  border-radius: 12px;
+  border-radius: 999px;
+  color: #0f6e56;
 }
 
 .sources span, .muted { color: #6d655c; }
 
 .composer {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: end;
-  margin-top: 24px;
+  position: relative;
+  width: 100%;
+  margin-top: 0;
 }
+
+.ask.chatting .composer { margin-top: 12px; }
 
 .composer textarea {
   width: 100%;
-  resize: vertical;
-  border: 1px solid #ddd4c6;
-  border-radius: 16px;
-  padding: 12px 14px;
+  min-height: 108px;
+  resize: none;
+  border: 1px solid #e4ddd2;
+  border-radius: 24px;
+  padding: 16px 58px 16px 18px;
   background: white;
+  box-shadow: 0 10px 30px rgba(28, 25, 21, 0.06);
+}
+
+.ask.chatting .composer textarea { min-height: 64px; }
+
+.composer button {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 36px;
 }
 
 .library ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }

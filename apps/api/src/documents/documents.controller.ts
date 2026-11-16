@@ -9,10 +9,9 @@ import { AccessService, AuthUser, fail } from '../common/access.service'
 import { AuthGuard } from '../common/auth.guard'
 import { CurrentUser } from '../common/current-user.decorator'
 import { DbService } from '../db/db.service'
-import { INDEXABLE_EXTENSIONS } from './extract-text'
+import { INDEXABLE_EXTENSIONS, INDEXABLE_TYPE_MESSAGE } from './extract-text'
 import { IndexingService } from './indexing.service'
 
-const ALLOWED = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'md', 'png', 'jpg', 'jpeg'])
 const MAX_FILE_SIZE = 20 * 1024 * 1024
 
 @Controller('documents')
@@ -72,7 +71,7 @@ export class DocumentsController {
     }),
     fileFilter: (_req, file, callback) => {
       const ext = extname(file.originalname).slice(1).toLowerCase()
-      if (!ALLOWED.has(ext)) callback(new BadRequestException('不支持这个文件类型'), false)
+      if (!INDEXABLE_EXTENSIONS.has(ext)) callback(new BadRequestException(INDEXABLE_TYPE_MESSAGE), false)
       else callback(null, true)
     },
   }))
@@ -83,18 +82,17 @@ export class DocumentsController {
     }
     if (!file) fail('请选择文件')
     const ext = extname(file.originalname).slice(1).toLowerCase()
-    if (!ALLOWED.has(ext)) {
+    if (!INDEXABLE_EXTENSIONS.has(ext)) {
       unlinkSync(file.path)
-      fail('不支持这个文件类型')
+      fail(INDEXABLE_TYPE_MESSAGE)
     }
     const id = randomUUID()
-    const indexable = INDEXABLE_EXTENSIONS.has(ext)
     await this.db.query(
-      `INSERT INTO documents (id, original_name, stored_name, size_bytes, uploaded_by, uploaded_at, vector_status, vector_message)
-       VALUES (?, ?, ?, ?, ?, NOW(), ?, ?)`,
-      [id, originalName(file.originalname), file.filename, file.size, user.id, indexable ? 'pending' : 'skipped', indexable ? null : '这个格式暂不入库'],
+      `INSERT INTO documents (id, original_name, stored_name, size_bytes, uploaded_by, uploaded_at, vector_status)
+       VALUES (?, ?, ?, ?, ?, NOW(), 'pending')`,
+      [id, originalName(file.originalname), file.filename, file.size, user.id],
     )
-    if (indexable) this.indexing.enqueue(id)
+    this.indexing.enqueue(id)
     return { id }
   }
 

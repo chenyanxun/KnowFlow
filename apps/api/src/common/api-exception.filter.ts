@@ -8,7 +8,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
       response.status(HttpStatus.BAD_REQUEST).json({ message: '文件不能超过 20MB' })
       return
     }
-    if (exception instanceof Error && exception.message === '不支持这个文件类型') {
+    if (exception instanceof Error && exception.message === '只能上传 pdf、docx、txt、md') {
       response.status(HttpStatus.BAD_REQUEST).json({ message: exception.message })
       return
     }

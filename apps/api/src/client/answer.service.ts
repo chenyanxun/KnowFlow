@@ -3,6 +3,7 @@ import { fail } from '../common/access.service'
 import { EmbeddingService } from '../documents/embedding.service'
 import { VectorStoreService } from '../documents/vector-store.service'
 
+const SEARCH_LIMIT = 20
 const MATCH_LIMIT = 4
 const MAX_DISTANCE = 0.56
 
@@ -18,12 +19,16 @@ export class AnswerService {
     let hits
     try {
       const [vector] = await this.embeddings.embed([question])
-      hits = await this.vectors.search(vector, MATCH_LIMIT)
+      hits = await this.vectors.search(vector, SEARCH_LIMIT)
     } catch (error) {
       const message = error instanceof Error ? error.message : '检索失败'
       fail(message.slice(0, 120))
     }
-    const matched = hits.filter((hit) => hit.text && hit.documentId && hit.distance <= MAX_DISTANCE)
+    const matched = hits
+      .filter((hit) => hit.text && hit.documentId && hit.distance <= MAX_DISTANCE)
+      .map((hit) => ({ ...hit, score: (1 - hit.distance) + termOverlap(question, hit.text) }))
+      .sort((left, right) => right.score - left.score)
+      .slice(0, MATCH_LIMIT)
     if (!matched.length) {
       return { answer: '资料里没有找到相关内容。', sources: [] }
     }
@@ -31,7 +36,7 @@ export class AnswerService {
     const found = answer.replace(/\s+/g, '').replace(/[。.]/g, '') !== '资料里没有找到相关内容'
     return {
       answer,
-      sources: found ? matched.map((hit) => ({
+      sources: found ? uniqueDocuments(matched).map((hit) => ({
         documentId: hit.documentId,
         originalName: hit.originalName || '未命名文档',
         excerpt: excerpt(hit.text),
@@ -77,6 +82,30 @@ export class AnswerService {
     if (!answer) fail('回答生成失败')
     return answer
   }
+}
+
+function termOverlap(question: string, text: string) {
+  const compactQuestion = question.replace(/[怎么如何什么哪些是否吗呢的了是多少？?，,。.\s]/g, '')
+  const compactText = text.replace(/\s+/g, '')
+  if (compactQuestion.length < 3) return 0
+  let matched = 0
+  let total = 0
+  for (let size = 3; size <= 6; size += 1) {
+    for (let start = 0; start + size <= compactQuestion.length; start += 1) {
+      total += 1
+      if (compactText.includes(compactQuestion.slice(start, start + size))) matched += 1
+    }
+  }
+  return total ? matched / total * 0.45 : 0
+}
+
+function uniqueDocuments<T extends { documentId: string }>(hits: T[]) {
+  const seen = new Set<string>()
+  return hits.filter((hit) => {
+    if (seen.has(hit.documentId)) return false
+    seen.add(hit.documentId)
+    return true
+  })
 }
 
 function excerpt(text: string) {

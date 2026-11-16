@@ -2,7 +2,8 @@ import { readFile } from 'fs/promises'
 import mammoth from 'mammoth'
 import { extname } from 'path'
 
-export const INDEXABLE_EXTENSIONS = new Set(['txt', 'md', 'docx', 'pdf'])
+export const INDEXABLE_EXTENSIONS = new Set(['pdf', 'docx', 'txt', 'md'])
+export const INDEXABLE_TYPE_MESSAGE = '只能上传 pdf、docx、txt、md'
 
 export async function extractDocumentText(path: string) {
   const extension = extname(path).slice(1).toLowerCase()

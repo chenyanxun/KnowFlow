@@ -24,19 +24,27 @@ export default function DocumentPage() {
       <div className="page-bar">
         <Typography.Title level={4} style={{ margin: 0 }}>文档管理</Typography.Title>
         {store.can('document:upload') ? (
-          <Upload
-            showUploadList={false}
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.png,.jpg,.jpeg"
-            beforeUpload={(file) => {
-              void store.addDocument(file).then((result) => {
-                if (!result.ok) message.error(result.message)
-                else message.success('上传成功')
-              })
-              return false
-            }}
-          >
-            <Button type="primary">上传文档</Button>
-          </Upload>
+          <Space>
+            <Upload
+              showUploadList={false}
+              accept=".pdf,.docx,.txt,.md"
+              beforeUpload={(file) => {
+                const extension = file.name.split('.').pop()?.toLowerCase() ?? ''
+                if (!['pdf', 'docx', 'txt', 'md'].includes(extension)) {
+                  message.error('只能上传 pdf、docx、txt、md')
+                  return false
+                }
+                void store.addDocument(file).then((result) => {
+                  if (!result.ok) message.error(result.message)
+                  else message.success('上传成功')
+                })
+                return false
+              }}
+            >
+              <Button type="primary">上传文档</Button>
+            </Upload>
+            <Typography.Text type="secondary">pdf、docx、txt、md</Typography.Text>
+          </Space>
         ) : null}
       </div>
       <Input.Search allowClear autoComplete="off" placeholder="搜索文件名" onSearch={setKeyword} onChange={(event) => setKeyword(event.target.value)} style={{ maxWidth: 280 }} />
